@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoramento IoT — Umidade</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+    h1 { font-size: 1.5rem; }
+    .controls { display: flex; gap: 8px; align-items: center; }
+    input { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; }
+    button { background: #3b82f6; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #2563eb; }
+
+    .banner { padding: 14px 16px; border-radius: 10px; margin-bottom: 16px; font-weight: 600; display: none; }
+    .banner.show { display: block; }
+    .banner.danger { background: rgba(239, 68, 68, 0.18); border: 1px solid var(--danger); color: #fecaca; }
+    .banner.warn { background: rgba(245, 158, 11, 0.18); border: 1px solid var(--warn); color: #fde68a; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    .label { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .value { font-size: 2rem; font-weight: 700; }
+    .sub { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .badge.NORMAL { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+    .badge.BAIXA, .badge.ALTA { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .badge.OFFLINE { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    th { background: #0b1220; color: var(--muted); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Monitoramento de Umidade IoT</h1>
+        <p class="sub">Limites de alerta: Baixa (&lt; 40%) | Alta (&gt; 90%)</p>
+      </div>
+      <div class="controls">
+        <input id="deviceInput" type="text" placeholder="ID do dispositivo" />
+        <button id="refreshBtn">Atualizar</button>
+      </div>
+    </header>
+
+    <div id="staleBanner" class="banner warn"></div>
+    <div id="alertBanner" class="banner danger"></div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Umidade Atual</div>
+        <div id="currentHumidity" class="value">-- %</div>
+        <div id="currentTemp" class="sub">Temperatura: -- °C</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Condição de Alerta</div>
+        <div id="alertStatus" class="value" style="font-size: 1.4rem;">--</div>
+        <div id="connectionStatus" class="sub">Aguardando dados...</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Última Atualização</div>
+        <div id="lastUpdate" class="value" style="font-size: 1.25rem;">--</div>
+        <div id="timeAgo" class="sub">--</div>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.1rem; margin-bottom: 10px;">Histórico de Leituras (últimas 20)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data / Hora</th>
+          <th>Umidade</th>
+          <th>Temperatura</th>
+          <th>Status</th>
+          <th>Message ID</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr><td colspan="5" style="text-align:center; color: var(--muted);">Carregando leituras...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    const cfg = window.APP_CONFIG;
+    const deviceInput = document.getElementById("deviceInput");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const staleBanner = document.getElementById("staleBanner");
+    const alertBanner = document.getElementById("alertBanner");
+    const currentHumidity = document.getElementById("currentHumidity");
+    const currentTemp = document.getElementById("currentTemp");
+    const alertStatus = document.getElementById("alertStatus");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const lastUpdate = document.getElementById("lastUpdate");
+    const timeAgo = document.getElementById("timeAgo");
+    const historyBody = document.getElementById("historyBody");
+
+    deviceInput.value = cfg.defaultDeviceId || "esp32-umidade-01";
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleString("pt-BR");
+    }
+
+    async function fetchReadings() {
+      const deviceId = deviceInput.value.trim();
+      if (!deviceId) return;
+
+      const url = `${cfg.supabaseUrl}/rest/v1/readings?device_id=eq.${encodeURIComponent(deviceId)}&order=created_at.desc&limit=20`;
+
+      try {
+        const res = await fetch(url, {
+          headers: {
+            apikey: cfg.publicKey,
+            Authorization: `Bearer ${cfg.publicKey}`,
+          },
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (!data.length) {
+          historyBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--muted);">Nenhuma leitura encontrada para "${deviceId}".</td></tr>`;
+          return;
+        }
+
+        const latest = data[0];
+        const ageSec = Math.floor((Date.now() - new Date(latest.created_at).getTime()) / 1000);
+        const isStale = ageSec > (cfg.staleThresholdSeconds || 30);
+
+        currentHumidity.textContent = `${Number(latest.humidity).toFixed(1)} %`;
+        currentTemp.textContent = latest.temperature !== null
+          ? `Temperatura: ${Number(latest.temperature).toFixed(1)} °C`
+          : "Temperatura: --";
+
+        alertStatus.innerHTML = `<span class="badge ${latest.alert_status}">${latest.alert_status}</span>`;
+        lastUpdate.textContent = formatDate(latest.created_at);
+        timeAgo.textContent = `Há ${Math.max(0, ageSec)} segundo(s)`;
+
+        if (isStale) {
+          staleBanner.textContent = `Atenção: Dados desatualizados! O sensor não envia novas leituras há ${ageSec} segundos.`;
+          staleBanner.classList.add("show");
+          connectionStatus.innerHTML = `<span class="badge OFFLINE">DESATUALIZADO</span>`;
+        } else {
+          staleBanner.classList.remove("show");
+          connectionStatus.textContent = "Transmissão ativa (Online)";
+        }
+
+        // Banner de alerta de umidade
+        if (latest.alert_status === "BAIXA") {
+          alertBanner.textContent = `ALERTA DE UMIDADE BAIXA: ${Number(latest.humidity).toFixed(1)}% (abaixo de 40%).`;
+          alertBanner.classList.add("show");
+        } else if (latest.alert_status === "ALTA") {
+          alertBanner.textContent = `ALERTA DE UMIDADE ALTA: ${Number(latest.humidity).toFixed(1)}% (acima de 90%).`;
+          alertBanner.classList.add("show");
+        } else {
+          alertBanner.classList.remove("show");
+        }
+
+        // Tabela de histórico
+        historyBody.innerHTML = data.map((row) => `
+          <tr>
+            <td>${formatDate(row.created_at)}</td>
+            <td><strong>${Number(row.humidity).toFixed(1)} %</strong></td>
+            <td>${row.temperature !== null ? Number(row.temperature).toFixed(1) + " °C" : "--"}</td>
+            <td><span class="badge ${row.alert_status}">${row.alert_status}</span></td>
+            <td style="color: var(--muted); font-size: 0.8rem;">${row.message_id}</td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        staleBanner.textContent = `Erro ao consultar a API: ${err.message}`;
+        staleBanner.classList.add("show");
+      }
+    }
+
+    refreshBtn.addEventListener("click", fetchReadings);
+    fetchReadings();
+    setInterval(fetchReadings, cfg.refreshIntervalMs || 5000);
+  </script>
+</body>
+</html>

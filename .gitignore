@@ -1,0 +1,11 @@
+wokwi/config.py
+wokwi/ca_cert.py
+site/config.js
+*.crt
+*.pem
+*.env
+registros/
+
+.DS_Store
+Thumbs.db
+.vscode/

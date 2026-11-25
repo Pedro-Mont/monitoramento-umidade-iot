@@ -1,0 +1,3 @@
+CA_PEM = """-----BEGIN CERTIFICATE-----
+COLE_AQUI_O_CONTEUDO_DO_ARQUIVO_emqx-ca.crt
+-----END CERTIFICATE-----"""

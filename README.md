@@ -6,7 +6,7 @@ Um ESP32 simulado no Wokwi lê 12 sensores DHT22 e envia a telemetria via MQTT s
 
 ## Links do projeto
 * **Simulação Wokwi:** https://wokwi.com/projects/481678427450143745
-* **Painel publicado (Cloudflare Pages):** https://monitoramento-umidade-jpg.pages.dev/
+* **Painel publicado (Cloudflare Pages):** https://monitoramento-umidade-iot-2.pages.dev/
 
 ## Arquitetura
 

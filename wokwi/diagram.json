@@ -1,0 +1,552 @@
+{
+  "version": 1,
+  "author": "Monitoramento de lavouras",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {
+        "env": "micropython-20260406-v1.28.0"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "txt_soja",
+      "top": -238,
+      "left": 200,
+      "attrs": {
+        "text": "Soja: sensores 1, 2 e 3"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_soja1",
+      "top": -210,
+      "left": 200,
+      "attrs": {
+        "humidity": "75",
+        "temperature": "25"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_soja2",
+      "top": -210,
+      "left": 290,
+      "attrs": {
+        "humidity": "75",
+        "temperature": "25"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_soja3",
+      "top": -210,
+      "left": 380,
+      "attrs": {
+        "humidity": "75",
+        "temperature": "25"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "txt_milho",
+      "top": -58,
+      "left": 200,
+      "attrs": {
+        "text": "Milho: sensores 1, 2 e 3"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_milho1",
+      "top": -30,
+      "left": 200,
+      "attrs": {
+        "humidity": "72",
+        "temperature": "26"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_milho2",
+      "top": -30,
+      "left": 290,
+      "attrs": {
+        "humidity": "72",
+        "temperature": "26"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_milho3",
+      "top": -30,
+      "left": 380,
+      "attrs": {
+        "humidity": "72",
+        "temperature": "26"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "txt_cafe",
+      "top": 122,
+      "left": 200,
+      "attrs": {
+        "text": "Café: sensores 1, 2 e 3"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cafe1",
+      "top": 150,
+      "left": 200,
+      "attrs": {
+        "humidity": "70",
+        "temperature": "23"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cafe2",
+      "top": 150,
+      "left": 290,
+      "attrs": {
+        "humidity": "70",
+        "temperature": "23"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cafe3",
+      "top": 150,
+      "left": 380,
+      "attrs": {
+        "humidity": "70",
+        "temperature": "23"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "txt_cana",
+      "top": -238,
+      "left": -380,
+      "attrs": {
+        "text": "Cana: sensores 1, 2 e 3"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cana1",
+      "top": -210,
+      "left": -380,
+      "attrs": {
+        "humidity": "80",
+        "temperature": "28"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cana2",
+      "top": -210,
+      "left": -290,
+      "attrs": {
+        "humidity": "80",
+        "temperature": "28"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_cana3",
+      "top": -210,
+      "left": -200,
+      "attrs": {
+        "humidity": "80",
+        "temperature": "28"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "txt_leds",
+      "top": 95,
+      "left": -380,
+      "attrs": {
+        "text": "LEDs de alerta: café, milho, soja e cana"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_cafe",
+      "top": 150,
+      "left": -390,
+      "rotate": 90,
+      "attrs": {
+        "value": "330"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_cafe",
+      "top": 210,
+      "left": -380,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_milho",
+      "top": 150,
+      "left": -320,
+      "rotate": 90,
+      "attrs": {
+        "value": "330"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_milho",
+      "top": 210,
+      "left": -310,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_soja",
+      "top": 150,
+      "left": -250,
+      "rotate": 90,
+      "attrs": {
+        "value": "330"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_soja",
+      "top": 210,
+      "left": -240,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_cana",
+      "top": 150,
+      "left": -180,
+      "rotate": 90,
+      "attrs": {
+        "value": "330"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_cana",
+      "top": 210,
+      "left": -170,
+      "attrs": {
+        "color": "red"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:23",
+      "dht_soja1:SDA",
+      "green",
+      []
+    ],
+    [
+      "esp:3V3",
+      "dht_soja1:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:GND.2",
+      "dht_soja1:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:22",
+      "dht_soja2:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_soja1:VCC",
+      "dht_soja2:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_soja1:GND",
+      "dht_soja2:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:21",
+      "dht_soja3:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_soja2:VCC",
+      "dht_soja3:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_soja2:GND",
+      "dht_soja3:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:19",
+      "dht_milho1:SDA",
+      "green",
+      []
+    ],
+    [
+      "esp:3V3",
+      "dht_milho1:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:GND.3",
+      "dht_milho1:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:18",
+      "dht_milho2:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_milho1:VCC",
+      "dht_milho2:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_milho1:GND",
+      "dht_milho2:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:5",
+      "dht_milho3:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_milho2:VCC",
+      "dht_milho3:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_milho2:GND",
+      "dht_milho3:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:17",
+      "dht_cafe1:SDA",
+      "green",
+      []
+    ],
+    [
+      "esp:3V3",
+      "dht_cafe1:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:GND.3",
+      "dht_cafe1:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:16",
+      "dht_cafe2:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_cafe1:VCC",
+      "dht_cafe2:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_cafe1:GND",
+      "dht_cafe2:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:4",
+      "dht_cafe3:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_cafe2:VCC",
+      "dht_cafe3:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_cafe2:GND",
+      "dht_cafe3:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:25",
+      "dht_cana1:SDA",
+      "green",
+      []
+    ],
+    [
+      "esp:3V3",
+      "dht_cana1:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:GND.1",
+      "dht_cana1:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:26",
+      "dht_cana2:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_cana1:VCC",
+      "dht_cana2:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_cana1:GND",
+      "dht_cana2:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:27",
+      "dht_cana3:SDA",
+      "green",
+      []
+    ],
+    [
+      "dht_cana2:VCC",
+      "dht_cana3:VCC",
+      "red",
+      []
+    ],
+    [
+      "dht_cana2:GND",
+      "dht_cana3:GND",
+      "black",
+      []
+    ],
+    [
+      "esp:32",
+      "r_cafe:1",
+      "orange",
+      []
+    ],
+    [
+      "r_cafe:2",
+      "led_cafe:A",
+      "orange",
+      []
+    ],
+    [
+      "esp:GND.1",
+      "led_cafe:C",
+      "black",
+      []
+    ],
+    [
+      "esp:33",
+      "r_milho:1",
+      "orange",
+      []
+    ],
+    [
+      "r_milho:2",
+      "led_milho:A",
+      "orange",
+      []
+    ],
+    [
+      "led_cafe:C",
+      "led_milho:C",
+      "black",
+      []
+    ],
+    [
+      "esp:14",
+      "r_soja:1",
+      "orange",
+      []
+    ],
+    [
+      "r_soja:2",
+      "led_soja:A",
+      "orange",
+      []
+    ],
+    [
+      "led_milho:C",
+      "led_soja:C",
+      "black",
+      []
+    ],
+    [
+      "esp:13",
+      "r_cana:1",
+      "orange",
+      []
+    ],
+    [
+      "r_cana:2",
+      "led_cana:A",
+      "orange",
+      []
+    ],
+    [
+      "led_soja:C",
+      "led_cana:C",
+      "black",
+      []
+    ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  },
+  "dependencies": {}
+}

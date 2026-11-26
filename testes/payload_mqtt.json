@@ -1,6 +1,6 @@
 {
-  "device_id": "esp32-umidade-01",
+  "device_id": "milho-s2",
   "message_id": "teste-mqtt-001",
-  "humidity": 32.5,
-  "temperature": 24.0
+  "humidity": 48.5,
+  "temperature": 27.0
 }

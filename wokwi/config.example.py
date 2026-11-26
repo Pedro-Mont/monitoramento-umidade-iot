@@ -1,0 +1,7 @@
+MQTT_HOST = "SEU_DOMINIO_EMQX"
+MQTT_PORT = 8883
+MQTT_USER = "esp32_umidade"
+MQTT_PASSWORD = "SUA_SENHA_MQTT"
+DEVICE_ID = "esp32-umidade-01"
+TOPIC = "grupo/umidade/telemetria"
+SEND_INTERVAL_MS = 10000
